@@ -1,0 +1,7 @@
+fastapi
+farm-haystack[preprocessing,elasticsearch,inference]
+uvicorn
+torch
+torchvision
+torchaudio
+streamlit
