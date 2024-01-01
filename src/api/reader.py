@@ -12,7 +12,8 @@ def get_reader(model_name_or_path="deepset/xlm-roberta-base-squad2-distilled"):
     
     reader = FARMReader(
         model_name_or_path=model_name_or_path, 
-        use_gpu=True
+        use_gpu=True,
+        
     )
     
     return reader

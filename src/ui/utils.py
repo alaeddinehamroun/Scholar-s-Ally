@@ -9,7 +9,7 @@ DOC_UPLOAD = "file-upload"
 STATUS = "initialized"
 
 
-def query(query, filters={}, top_k_reader=5, top_k_retriever=5):
+def query(query, top_k_reader=5, top_k_retriever=2):
     """
     Send a query to the REST API and parse the answer.
     Returns both a ready-to-use representation of the results and the raw JSON.
@@ -18,12 +18,10 @@ def query(query, filters={}, top_k_reader=5, top_k_retriever=5):
     url = f"{API_ENDPOINT}/{DOC_REQUEST}"
     params = {
         "query": query,
-        "filters": filters,
         "top_k_reader": top_k_reader,
         "top_k_retriever": top_k_retriever,
     }
-    req = {"query": query, "params": params}
-    response_raw = requests.post(url, json=req)
+    response_raw = requests.get(url, params=params)
 
     if response_raw.status_code >=400 and response_raw.status_code !=503:
         raise Exception(f"{vars(response_raw)}")

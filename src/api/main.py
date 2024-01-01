@@ -2,15 +2,16 @@ from fastapi import FastAPI, File, UploadFile
 from pipelines import query_pipeline, index_pipeline
 import os
 from document_store import doc_store
+from retriever import get_retriever
 
 # Init FastAPI
 app = FastAPI()
 
 doc_dir = '../../data'
 @app.get("/query")
-async def query(q):
+async def query(query, top_k_reader=5, top_k_retriever=2):
     pipeline = query_pipeline()
-    return pipeline.run(query=q, params={"Retriever": {"top_k": 1}, "Reader": {"top_k": 5}})
+    return pipeline.run(query=query, params={"Retriever": {"top_k": top_k_retriever}, "Reader": {"top_k": top_k_reader}})
 
 
 @app.get("/index")
@@ -56,9 +57,28 @@ async def upload_file(files: list[UploadFile]= File(...), keep_files=False):
 async def clear_document_store():
     
     try:
-        doc_store.delete_all_documents()
+        doc_store.delete_documents()
     
     except Exception as e:
         return e
     
     return True
+
+@app.get("/document_store_stats")
+async def get_document_store_stats():
+    document_count = doc_store.get_document_count()
+    label_count = doc_store.get_label_count()
+    embedding_count = doc_store.get_embedding_count()
+
+    return {
+        "document_count": document_count,
+        "label_count": label_count,
+        "embedding_count": embedding_count,
+    }
+
+
+# Tests
+@app.get("/test_retriever")
+async def test_retriever():
+    retriever = get_retriever()
+    return retriever.retrieve(query="Who is the father of Arya Stark?", top_k=10)

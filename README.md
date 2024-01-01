@@ -36,6 +36,11 @@ You can visit the docs of Elasticsearch for more details.
 # Make sure that Docker is available in your environment.
 python3 src/launch_es.py
 ```
+or 
+```bash
+docker pull docker.elastic.co/elasticsearch/elasticsearch:7.9.2
+docker run -d -p 9200:9200 -e "discovery.type=single-node" elasticsearch:7.9.2
+```
 #### 5. Start the API:
 ```bash
 cd src/api

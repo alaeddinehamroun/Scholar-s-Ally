@@ -43,8 +43,8 @@ def get_preprocessor():
             split_overlap=20, # Enables the sliding window approach
             split_length=100, # The max number of words in a document
             split_respect_sentence_boundary=True, # Retains complete sentences in split documents
-            language='fr', # Used by NLTK to best detect the sentence boundaries for that language
-            add_page_number=True, # Adds page numbers to the meta fields of the documents
+            language='en', # Used by NLTK to best detect the sentence boundaries for that language
+            # add_page_number=True, # Adds page numbers to the meta fields of the documents
         )
     return preprocessor
 

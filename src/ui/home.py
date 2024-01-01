@@ -42,6 +42,24 @@ Ask a question and see if Haystack can find the correct answer to your query!
 
     # Sidebar
     st.sidebar.header("Options")
+
+    retriever = st.sidebar.selectbox(
+        label="Retriever",
+        options=["BM25", "Embedding"],
+        index=0,
+        key="retriever",
+        on_change=reset_results,
+    )
+
+    reader = st.sidebar.selectbox(
+        label="Reader",
+        options=["FARM", "BERT"],
+        index=0,
+        key="reader",  
+        on_change=reset_results,
+    )
+    
+    
     top_k_reader = st.sidebar.slider(
         "Max. number of answers",
         min_value=1,
