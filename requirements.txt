@@ -5,3 +5,6 @@ torch
 torchvision
 torchaudio
 streamlit
+Markdown
+st-annotated-text
+python-multipart

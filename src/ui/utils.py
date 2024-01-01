@@ -1,9 +1,12 @@
 import requests
+import logging
+from time import sleep
+from typing import Tuple, Optional
 
-
-API_ENDPOINT = 'http://localhost:8000/api'
+API_ENDPOINT = 'http://localhost:8000'
 DOC_REQUEST = "query"
 DOC_UPLOAD = "file-upload"
+STATUS = "initialized"
 
 
 def query(query, filters={}, top_k_reader=5, top_k_retriever=5):
@@ -67,3 +70,35 @@ def upload_doc(file):
     response = requests.post(url, files=files).json()
     return response
 
+
+def haystack_is_ready():
+    """
+    Use the REST API to check if Haystack is ready to answer questions.
+    """
+    url = f"{API_ENDPOINT}/{STATUS}"
+
+    try:
+        if requests.get(url).status_code < 400:
+            return True
+    except Exception as e:
+        logging.exception(e)
+        sleep(1)  # To avoid spamming a non-existing endpoint at startup
+    return False
+
+
+def get_backlink(result) -> Tuple[Optional[str], Optional[str]]:
+    if result.get("document", None):
+        doc = result["document"]
+        if isinstance(doc, dict):
+            if doc.get("meta", None):
+                if isinstance(doc["meta"], dict):
+                    if doc["meta"].get("url", None) and doc["meta"].get("title", None):
+                        return doc["meta"]["url"], doc["meta"]["title"]
+    return None, None
+
+
+def upload_doc(file):
+    url = f"{API_ENDPOINT}/{DOC_UPLOAD}"
+    files = [("files", file)]
+    response = requests.post(url, files=files).json()
+    return response

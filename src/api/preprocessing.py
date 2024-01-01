@@ -52,8 +52,6 @@ def get_converter():
     return PDFToTextConverter(
         remove_numeric_tables=True, # If True, tables containing numbers only will be removed from the docs
         valid_languages=["fr", "en"], # Only considers text in these languages
-        ocr="auto", # The OCR library to be used only for extracting text from images in the pdf and integrating it with the text in the pdf.
-        ocr_language="en+fr", # Language of the text in the images
     )
 
 def preprocess(docs):

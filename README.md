@@ -47,3 +47,7 @@ For now, two endpoints are available:
 
 
 #### 6. Start the UI (Soon):
+```bash
+cd src/
+python3 -m streamlit run ui/webapp.py 
+```
