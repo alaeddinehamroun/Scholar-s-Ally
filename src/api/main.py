@@ -1,4 +1,4 @@
-from fastapi import FastAPI, File, UploadFile
+from fastapi import FastAPI, File, Form, UploadFile
 from pipelines import query_pipeline, index_pipeline
 import os
 from document_store import doc_store
@@ -9,7 +9,7 @@ app = FastAPI()
 
 doc_dir = '../../data'
 @app.get("/query")
-async def query(query, top_k_reader=5, top_k_retriever=2):
+async def query(query: str, top_k_reader: int, top_k_retriever: int):
     pipeline = query_pipeline()
     return pipeline.run(query=query, params={"Retriever": {"top_k": top_k_retriever}, "Reader": {"top_k": top_k_reader}})
 

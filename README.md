@@ -44,7 +44,7 @@ docker run -d -p 9200:9200 -e "discovery.type=single-node" elasticsearch:7.9.2
 #### 5. Start the API:
 ```bash
 cd src/api
-uvicorn main: app --reload
+uvicorn main:app --reload
 ```
 For now, two endpoints are available:
 1. Index: to index your files availables at data/ folder
@@ -54,5 +54,5 @@ For now, two endpoints are available:
 #### 6. Start the UI (Soon):
 ```bash
 cd src/
-python3 -m streamlit run ui/webapp.py 
+python3 -m streamlit run ui/home.py 
 ```
