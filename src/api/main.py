@@ -18,7 +18,8 @@ async def query(query: str, top_k_reader: int, top_k_retriever: int):
 async def index():
     indexing_pipeline = index_pipeline()
     files_to_index = [doc_dir + "/" + f for f in os.listdir(doc_dir)]
-    return indexing_pipeline.run_batch(file_paths=files_to_index)
+    files_metadata = [{"name": f} for f in os.listdir(doc_dir)]
+    return indexing_pipeline.run(file_paths=files_to_index, meta=files_metadata)
 
 
 @app.get("/initialized")
