@@ -5,7 +5,7 @@ from reader import get_reader
 from retriever import get_retriever
 from document_store import doc_store
 from preprocessing import get_converter, get_preprocessor 
-def query_pipeline(retriever_type="BM25"):
+def query_pipeline(retriever_type="BM25", reader_model="deepset/roberta-base-squad2"):
     """
     Query pipeline
 
@@ -14,7 +14,7 @@ def query_pipeline(retriever_type="BM25"):
     """
     
     pipeline = ExtractiveQAPipeline(
-        reader=get_reader(),
+        reader=get_reader(model_name_or_path=reader_model),
         retriever=get_retriever(retriever_type)
     )
 

@@ -51,11 +51,16 @@ Ask a question and see if Haystack can find the correct answer to your query!
         on_change=reset_results,
     )
 
-    reader = st.sidebar.selectbox(
-        label="Reader",
-        options=["FARM", "BERT"],
+    reader_model = st.sidebar.selectbox(
+        label="Reader's Model",
+        options=[
+            "deepset/roberta-base-squad2",
+            "deepset/xlm-roberta-base-squad2-distilled",
+            "deepset/xlm-roberta-large-squad2",
+            "deepset/minilm-uncased-squad2",
+            "ahotrod/albert_xxlargev1_squad2_512"],
         index=0,
-        key="reader",  
+        key="reader_model",  
         on_change=reset_results,
     )
     
@@ -133,7 +138,7 @@ Ask a question and see if Haystack can find the correct answer to your query!
         ):
             try:
                 st.session_state.results, st.session_state.raw_json = query(
-                    question, top_k_reader=top_k_reader, top_k_retriever=top_k_retriever, retriever_type=retriever
+                    question, top_k_reader=top_k_reader, top_k_retriever=top_k_retriever, retriever_type=retriever, reader_model=reader_model
                 )
             except JSONDecodeError as je:
                 st.error("👓 &nbsp;&nbsp; An error occurred reading the results. Is the document store working?")
