@@ -5,7 +5,7 @@ from reader import get_reader
 from retriever import get_retriever
 from document_store import doc_store
 from preprocessing import get_converter, get_preprocessor 
-def query_pipeline():
+def query_pipeline(retriever_type="BM25"):
     """
     Query pipeline
 
@@ -15,7 +15,7 @@ def query_pipeline():
     
     pipeline = ExtractiveQAPipeline(
         reader=get_reader(),
-        retriever=get_retriever()
+        retriever=get_retriever(retriever_type)
     )
 
     return pipeline

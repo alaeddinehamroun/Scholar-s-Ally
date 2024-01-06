@@ -45,7 +45,7 @@ Ask a question and see if Haystack can find the correct answer to your query!
 
     retriever = st.sidebar.selectbox(
         label="Retriever",
-        options=["BM25", "Embedding"],
+        options=["BM25", "TFIDF", "Embedding-deepset-sentence-bert", "DPR"],
         index=0,
         key="retriever",
         on_change=reset_results,
@@ -133,7 +133,7 @@ Ask a question and see if Haystack can find the correct answer to your query!
         ):
             try:
                 st.session_state.results, st.session_state.raw_json = query(
-                    question, top_k_reader=top_k_reader, top_k_retriever=top_k_retriever
+                    question, top_k_reader=top_k_reader, top_k_retriever=top_k_retriever, retriever_type=retriever
                 )
             except JSONDecodeError as je:
                 st.error("👓 &nbsp;&nbsp; An error occurred reading the results. Is the document store working?")

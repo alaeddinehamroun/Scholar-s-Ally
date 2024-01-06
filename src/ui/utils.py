@@ -9,7 +9,7 @@ DOC_UPLOAD = "file-upload"
 STATUS = "initialized"
 
 
-def query(query, top_k_reader=5, top_k_retriever=2):
+def query(query, top_k_reader=5, top_k_retriever=2, retriever_type="BM25"):
     """
     Send a query to the REST API and parse the answer.
     Returns both a ready-to-use representation of the results and the raw JSON.
@@ -20,6 +20,7 @@ def query(query, top_k_reader=5, top_k_retriever=2):
         "query": query,
         "top_k_reader": top_k_reader,
         "top_k_retriever": top_k_retriever,
+        "retriever_type": retriever_type,
     }
     response_raw = requests.get(url, params=params)
 

@@ -9,8 +9,8 @@ app = FastAPI()
 
 doc_dir = '../../data'
 @app.get("/query")
-async def query(query: str, top_k_reader: int, top_k_retriever: int):
-    pipeline = query_pipeline()
+async def query(query: str, top_k_reader: int, top_k_retriever: int, retriever_type: str = "BM25"):
+    pipeline = query_pipeline(retriever_type= retriever_type)
     return pipeline.run(query=query, params={"Retriever": {"top_k": top_k_retriever}, "Reader": {"top_k": top_k_reader}})
 
 
