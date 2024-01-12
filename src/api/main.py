@@ -91,36 +91,36 @@ async def test_retriever():
 
 
 # Evaluate pipeline
-@app.get("/evaluate")
-async def evaluate(retriever_type: str = "BM25", reader_model: str = "deepset/roberta-base-squad2"):
-    # Clear the document store
-    doc_store.delete_documents()
+# @app.get("/evaluate")
+# async def evaluate(retriever_type: str = "BM25", reader_model: str = "deepset/roberta-base-squad2"):
+#     # Clear the document store
+#     doc_store.delete_documents()
 
-    # Fetch, store and preprocess evaluation data
-    # fetch_evaluation_data()
+#     # Fetch, store and preprocess evaluation data
+#     # fetch_evaluation_data()
 
-    # Index evaluation data
-    eval_preprocessor = PreProcessor(
-    split_by="word",
-    split_length=200,
-    split_overlap=0,
-    split_respect_sentence_boundary=False,
-    clean_empty_lines=False,
-    clean_whitespace=False,
-)
-    doc_store.add_eval_data(
-        filename=f"{doc_dir}/evaluation_data/nq_dev_subset_v2.json",
-        preprocessor=eval_preprocessor
-    )
+#     # Index evaluation data
+#     eval_preprocessor = PreProcessor(
+#     split_by="word",
+#     split_length=200,
+#     split_overlap=0,
+#     split_respect_sentence_boundary=False,
+#     clean_empty_lines=False,
+#     clean_whitespace=False,
+# )
+#     doc_store.add_eval_data(
+#         filename=f"{doc_dir}/evaluation_data/nq_dev_subset_v2.json",
+#         preprocessor=eval_preprocessor
+#     )
 
-    qp = query_pipeline(retriever_type= retriever_type, reader_model=reader_model)
+#     qp = query_pipeline(retriever_type= retriever_type, reader_model=reader_model)
     
-    eval_labels = doc_store.get_all_labels_aggregated(drop_negative_labels=True, drop_no_answers=True)
-    eval_result = qp.eval(labels=eval_labels, params={"Retriever": {"top_k": 5}})
+#     eval_labels = doc_store.get_all_labels_aggregated(drop_negative_labels=True, drop_no_answers=True)
+#     eval_result = qp.eval(labels=eval_labels, params={"Retriever": {"top_k": 5}})
     
-    # Calculating Evaluation Metrics
-    metrics = eval_result.calculate_metrics()
-    qp.print_eval_report(eval_result)
+#     # Calculating Evaluation Metrics
+#     metrics = eval_result.calculate_metrics()
+#     qp.print_eval_report(eval_result)
 
 
-    return metrics
+#     return metrics

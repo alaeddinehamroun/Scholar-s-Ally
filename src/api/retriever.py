@@ -27,3 +27,4 @@ def get_retriever(retriever_type="BM25"):
         # Computationally expensive, needs two models.
         retriever =  DensePassageRetriever(document_store=doc_store, query_embedding_model="facebook/dpr-question_encoder-single-nq-base", passage_embedding_model="facebook/dpr-ctx_encoder-single-nq-base")
     return retriever
+

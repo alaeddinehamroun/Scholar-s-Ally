@@ -1,5 +1,5 @@
 fastapi
-farm-haystack[preprocessing,elasticsearch,inference]
+farm-haystack[preprocessing,elasticsearch,inference,metrics]
 uvicorn
 torch
 torchvision

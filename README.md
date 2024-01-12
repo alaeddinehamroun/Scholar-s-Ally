@@ -51,7 +51,7 @@ For now, two endpoints are available:
 2. Query: enter your question and you'll get the top_k answers
 
 
-#### 6. Start the UI (Soon):
+#### 6. Start the UI:
 ```bash
 cd src/
 python3 -m streamlit run ui/home.py 
