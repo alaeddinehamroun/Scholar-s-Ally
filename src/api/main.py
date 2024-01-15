@@ -1,6 +1,6 @@
 from fastapi import FastAPI, File, Form, UploadFile
 from preprocessing import get_preprocessor
-from pipelines import query_pipeline, index_pipeline
+from pipelines import query_pipeline, index_pipeline, rag_pipeline
 import os
 from document_store import doc_store
 from retriever import get_retriever
@@ -22,6 +22,11 @@ async def index():
     files_to_index = [doc_dir + "/" + f for f in os.listdir(doc_dir)]
     files_metadata = [{"name": f} for f in os.listdir(doc_dir)]
     return indexing_pipeline.run(file_paths=files_to_index, meta=files_metadata)
+
+@app.get("/rag")
+async def rag(query: str, top_k_retriever: int, retriever_type: str = "BM25"):
+    pipeline = rag_pipeline(retriever_type= retriever_type, top_k_retriever=top_k_retriever)
+    return pipeline.run(query=query)
 
 
 @app.get("/initialized")
