@@ -1,6 +1,6 @@
 from fastapi import FastAPI, File, Form, UploadFile
 from preprocessing import get_preprocessor
-from pipelines import query_pipeline, index_pipeline, rag_pipeline
+from pipelines import extractive_qa_pipeline, index_pipeline, query_and_rag_pipeline, rag_pipeline
 import os
 from document_store import doc_store
 from retriever import get_retriever
@@ -12,7 +12,7 @@ app = FastAPI()
 doc_dir = '../../data'
 @app.get("/query")
 async def query(query: str, top_k_reader: int, top_k_retriever: int, retriever_type: str = "BM25", reader_model: str = "deepset/roberta-base-squad2"):
-    pipeline = query_pipeline(retriever_type= retriever_type, reader_model=reader_model)
+    pipeline = extractive_qa_pipeline(retriever_type= retriever_type, reader_model=reader_model)
     return pipeline.run(query=query, params={"Retriever": {"top_k": top_k_retriever}, "Reader": {"top_k": top_k_reader}})
 
 
@@ -27,7 +27,11 @@ async def index():
 async def rag(query: str, top_k_retriever: int, retriever_type: str = "BM25"):
     pipeline = rag_pipeline(retriever_type= retriever_type, top_k_retriever=top_k_retriever)
     return pipeline.run(query=query)
-
+@app.get("/extractive_qa_rag")
+async def extractive_qa_rag(query: str, top_k_reader: int, top_k_retriever: int, retriever_type: str = "BM25", reader_model: str = "deepset/roberta-base-squad2"):
+    pipeline = query_and_rag_pipeline(retriever_type= retriever_type, reader_model=reader_model, top_k_reader=top_k_reader, top_k_retriever=top_k_retriever)
+    
+    return pipeline.run(query=query)
 
 @app.get("/initialized")
 async def initialized():
@@ -92,7 +96,7 @@ async def get_document_store_stats():
 @app.get("/test_retriever")
 async def test_retriever():
     retriever = get_retriever()
-    return retriever.retrieve(query="Who is the father of Arya Stark?", top_k=10)
+    return retriever.retrieve(query="What is total theorem?", top_k=10)
 
 
 # Evaluate pipeline

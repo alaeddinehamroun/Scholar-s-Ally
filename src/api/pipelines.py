@@ -1,19 +1,18 @@
 from haystack import Pipeline
 from haystack.pipelines import ExtractiveQAPipeline
-from haystack.nodes import PromptNode, PromptTemplate, AnswerParser
-
+from haystack.nodes import PromptNode, PromptTemplate, AnswerParser, JoinAnswers
 from reader import get_reader
 from retriever import get_retriever
 from document_store import doc_store
 from preprocessing import get_converter, get_preprocessor 
-def query_pipeline(retriever_type="BM25", reader_model="deepset/roberta-base-squad2"):
+def extractive_qa_pipeline(retriever_type="BM25", reader_model="deepset/roberta-base-squad2"):
     """
     Query pipeline
 
     Returns:
         pipeline: query pipeline
     """
-    
+
     pipeline = ExtractiveQAPipeline(
         reader=get_reader(model_name_or_path=reader_model),
         retriever=get_retriever(retriever_type)
@@ -29,7 +28,7 @@ def index_pipeline():
     Returns:
         indexing_pipeline: indexing pipeline
     """
-    
+    # By default, an indexing pipeline receives a root node File as the entry point to the pipeline graph.
     indexing_pipeline = Pipeline()
 
     # Converter
@@ -80,3 +79,15 @@ def get_prompt_node():
     prompt_node = PromptNode(model_name_or_path="google/flan-t5-base", default_prompt_template=rag_prompt) # uses flan-t5 model by default
 
     return prompt_node
+
+
+def query_and_rag_pipeline(retriever_type="BM25", reader_model="deepset/roberta-base-squad2", top_k_retriever=1, top_k_reader=1):
+    p = Pipeline()
+    p.add_node(component=get_retriever(retriever_type, top_k=top_k_retriever), name="retriever", inputs=["Query"])
+    p.add_node(component=get_reader(model_name_or_path=reader_model, top_k_reader=top_k_reader), name="QAReader", inputs=["retriever"])
+    p.add_node(component=get_prompt_node(), name="QAPromptNode", inputs=["retriever"])
+    
+    # Setting sort_by_score to False because answers coming from the generator have no score.
+    p.add_node(component=JoinAnswers('concatenate', sort_by_score=False), name="JoinAnswers", inputs=["QAReader", "QAPromptNode"])
+    p.draw()
+    return p

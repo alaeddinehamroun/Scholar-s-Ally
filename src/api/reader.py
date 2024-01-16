@@ -9,7 +9,7 @@ readers = [
 ]
 
 # def get_reader(model_name_or_path="deepset/xlm-roberta-base-squad2-distilled"):
-def get_reader(model_name_or_path="deepset/roberta-base-squad2"):
+def get_reader(model_name_or_path="deepset/roberta-base-squad2", top_k_reader=1):
 
     """
     Get reader
@@ -22,6 +22,7 @@ def get_reader(model_name_or_path="deepset/roberta-base-squad2"):
     reader = FARMReader(
         model_name_or_path=model_name_or_path, 
         use_gpu=True,
+        top_k=top_k_reader
         
     )
     
