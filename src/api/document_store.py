@@ -1,12 +1,6 @@
 
 from haystack.document_stores import ElasticsearchDocumentStore
 
-
-
-
-
-
-
 # Init Elasticsearch Document Store
 doc_store = ElasticsearchDocumentStore(
         host="localhost", 
@@ -14,3 +8,4 @@ doc_store = ElasticsearchDocumentStore(
         password="", 
         index="document",
 )
+

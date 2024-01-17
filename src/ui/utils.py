@@ -4,7 +4,7 @@ from time import sleep
 from typing import Tuple, Optional
 
 API_ENDPOINT = 'http://localhost:8000'
-DOC_REQUEST = "query"
+DOC_REQUEST = "extractive_qa_rag"
 DOC_UPLOAD = "file-upload"
 STATUS = "initialized"
 
@@ -33,33 +33,34 @@ def query(query, top_k_reader=5, top_k_retriever=2, retriever_type="BM25", reade
         raise Exception(", ".join(response["errors"]))
     
     # Format response
-    results = []
+    extqa_results = []
     answers = response["answers"]
-
-    for answer in answers:
+    ext_qa_answers = answers[:-1]
+    rag_answer = answers[-1]
+    for answer in ext_qa_answers:
         if answer.get("answer", None):
-            results.append(
+            extqa_results.append(
                 {
                     "context": "..." + answer["context"] + "...",
                     "answer": answer.get("answer", None),
                     "source": answer["meta"]["name"],
                     "relevance": round(answer["score"] * 100, 2),
-                    "document": [doc for doc in response["documents"] if doc["id"] in answer["document_ids"]][0],
+                    # "document": [doc for doc in response["documents"] if doc["id"] in answer["document_ids"]][0],
                     "offset_start_in_doc": answer["offsets_in_document"][0]["start"],
                     "_raw": answer,
                 }
             )
         else:
-            results.append(
+            extqa_results.append(
                 {
                     "context": None,
                     "answer": None,
-                    "document": None,
+                    # "document": None,
                     "relevance": round(answer["score"] * 100, 2),
                     "_raw": answer,
                 }
             )
-    return results, response
+    return extqa_results, rag_answer, response
 
 
 

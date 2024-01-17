@@ -1,11 +1,10 @@
 from fastapi import FastAPI, File, Form, UploadFile
 from preprocessing import get_preprocessor
-from pipelines import extractive_qa_pipeline, index_pipeline, query_and_rag_pipeline, rag_pipeline
+from pipelines import extractive_qa_pipeline, index_pipeline, extqa_and_rag_pipeline, rag_pipeline
 import os
 from document_store import doc_store
 from retriever import get_retriever
 from haystack.nodes import PreProcessor
-
 # Init FastAPI
 app = FastAPI()
 
@@ -29,7 +28,7 @@ async def rag(query: str, top_k_retriever: int, retriever_type: str = "BM25"):
     return pipeline.run(query=query)
 @app.get("/extractive_qa_rag")
 async def extractive_qa_rag(query: str, top_k_reader: int, top_k_retriever: int, retriever_type: str = "BM25", reader_model: str = "deepset/roberta-base-squad2"):
-    pipeline = query_and_rag_pipeline(retriever_type= retriever_type, reader_model=reader_model, top_k_reader=top_k_reader, top_k_retriever=top_k_retriever)
+    pipeline = extqa_and_rag_pipeline(retriever_type= retriever_type, reader_model=reader_model, top_k_reader=top_k_reader, top_k_retriever=top_k_retriever)
     
     return pipeline.run(query=query)
 
@@ -96,7 +95,7 @@ async def get_document_store_stats():
 @app.get("/test_retriever")
 async def test_retriever():
     retriever = get_retriever()
-    return retriever.retrieve(query="What is total theorem?", top_k=10)
+    return retriever.retrieve(query="What is markov reward process?", top_k=10)
 
 
 # Evaluate pipeline

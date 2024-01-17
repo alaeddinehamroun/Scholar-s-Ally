@@ -8,3 +8,4 @@ streamlit
 Markdown
 st-annotated-text
 python-multipart
+pyperclip

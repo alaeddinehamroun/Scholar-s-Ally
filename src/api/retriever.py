@@ -4,15 +4,14 @@ from document_store import doc_store
 from abc import ABC, abstractmethod
 
 
-
-
-
-
-
 def get_retriever(retriever_type="BM25", top_k=1):
     """
+    Get retriever
+    Args:
+        retriever_type: retriever type
+    Returns:
+        retriever: retriever
     """
-    
 
     if retriever_type == "BM25":
         # Recommended, does not need a neural network for indexing

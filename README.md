@@ -7,6 +7,9 @@ Scholar's Ally. How it works?
 1. Integrate educational content: chapters of a specific subject at school (pdfs).
 2. Type a question about it.
 3. Get the most relevant information from the integrated content and where to find it.
+
+![Example Image](Screenshot.png)
+
 ## Installation steps
 
 #### 1. Clone the repository:

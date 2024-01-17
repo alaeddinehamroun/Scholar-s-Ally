@@ -1,10 +1,12 @@
 import streamlit as st
 import os
+import pyperclip
 import logging
 from json import JSONDecodeError
 from ui.utils import haystack_is_ready, query, get_backlink, upload_doc
 from annotated_text import annotation
 from markdown import markdown
+os.environ["CUDA_VISIBLE_DEVICES"] = "1" 
 
 # Adjust to a question that you would like users to see in the search bar when they load the UI:
 DEFAULT_QUESTION_AT_STARTUP = "Who is me?"
@@ -22,13 +24,15 @@ def main():
     # Persisten state
     set_state_if_absent("question", DEFAULT_QUESTION_AT_STARTUP)
     set_state_if_absent("answer", DEFAULT_ANSWER_AT_STARTUP)
-    set_state_if_absent("results", None)
+    set_state_if_absent("ext_qa_results", None)
+    set_state_if_absent("rag_result", None)
     set_state_if_absent("raw_json", None)
 
     # Callback to reset the interface in case the text of the question changes
     def reset_results(*args):
         st.session_state.answer = None
-        st.session_state.results = None
+        st.session_state.ext_qa_results = None
+        st.session_state.rag_result = None
         st.session_state.raw_json = None
 
     # Title
@@ -137,7 +141,7 @@ Ask a question and see if Haystack can find the correct answer to your query!
             "🧠 &nbsp;&nbsp; Performing neural search on documents... \n "
         ):
             try:
-                st.session_state.results, st.session_state.raw_json = query(
+                st.session_state.ext_qa_results, st.session_state.rag_result, st.session_state.raw_json = query(
                     question, top_k_reader=top_k_reader, top_k_retriever=top_k_retriever, retriever_type=retriever, reader_model=reader_model
                 )
             except JSONDecodeError as je:
@@ -150,13 +154,24 @@ Ask a question and see if Haystack can find the correct answer to your query!
                 else:
                     st.error("🐞 &nbsp;&nbsp; An error occurred during the request.")
                 return
-    
-    if st.session_state.results:
+    if st.session_state.rag_result:
+        st.write("## Generated Answer:")
+        generated_answer = st.session_state.rag_result['answer']
+        if generated_answer:
+            a = st.text_area(
+                label="Generated Answer",
+                value=generated_answer,
+                height=100
+            )
+            if st.button('Copy'):
+                pyperclip.copy(a)
+                st.success('Text copied successfully!')
+    if st.session_state.ext_qa_results:
 
   
         st.write("## Results:")
 
-        for count, result in enumerate(st.session_state.results):
+        for count, result in enumerate(st.session_state.ext_qa_results):
             if result['answer']:
                 answer, context = result['answer'], result['context']
                 start_idx = context.find(answer)
@@ -165,12 +180,12 @@ Ask a question and see if Haystack can find the correct answer to your query!
                     markdown(context[:start_idx] + str(annotation(answer, "ANSWER", "#8ef")) + context[end_idx:]),
                     unsafe_allow_html=True,
                 )
-                source = ""
-                url, title = get_backlink(result)
-                if url and title:
-                    source = f"[{result['document']['meta']['title']}]({result['document']['meta']['url']})"
-                else:
-                    source = f"{result['source']}"
+                source = f"{result['source']}"
+                # url, title = get_backlink(result)
+                # if url and title:
+                #     source = f"[{result['document']['meta']['title']}]({result['document']['meta']['url']})"
+                # else:
+                #     source = f"{result['source']}"
                 st.markdown(f"**Relevance:** {result['relevance']} -  **Source:** {source}")
             
 

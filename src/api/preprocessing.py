@@ -32,6 +32,15 @@ def convert_files(doc_dir):
         raise e
 
 def get_preprocessor():
+
+    """
+    Get preprocessor
+    
+
+    Returns:
+        preprocessor: preprocessor
+    """
+    
     preprocessor = PreProcessor(
             # Cleaning
             clean_empty_lines=True, # Will normalize 3 or more consecutive empty lines to be just a two empty lines
@@ -72,4 +81,3 @@ def preprocess(docs):
         return docs
     except Exception as e:
         logging.error(f"Error preprocessing files: {e}")
-

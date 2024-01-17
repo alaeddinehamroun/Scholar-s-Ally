@@ -5,6 +5,8 @@ from reader import get_reader
 from retriever import get_retriever
 from document_store import doc_store
 from preprocessing import get_converter, get_preprocessor 
+
+
 def extractive_qa_pipeline(retriever_type="BM25", reader_model="deepset/roberta-base-squad2"):
     """
     Query pipeline
@@ -19,7 +21,6 @@ def extractive_qa_pipeline(retriever_type="BM25", reader_model="deepset/roberta-
     )
 
     return pipeline
-
 
 def index_pipeline():
     """
@@ -42,7 +43,6 @@ def index_pipeline():
 
     return indexing_pipeline
 
-
 def rag_pipeline(retriever_type="BM25", top_k_retriever=1):
     """
     RAG pipeline
@@ -56,9 +56,27 @@ def rag_pipeline(retriever_type="BM25", top_k_retriever=1):
     rag_pipeline.add_node(component=get_retriever(retriever_type, top_k=top_k_retriever), name="retriever", inputs=["Query"])
     rag_pipeline.add_node(component=get_prompt_node(), name="prompt_node", inputs=["retriever"])
 
+
     return rag_pipeline
 
-
+def extqa_and_rag_pipeline(retriever_type="BM25", reader_model="deepset/roberta-base-squad2", top_k_retriever=1, top_k_reader=1):
+    """
+    ExtractiveQA and RAG pipeline
+    
+    Keyword arguments:
+    argument -- description
+    Return: return_description
+    """
+    
+    p = Pipeline()
+    p.add_node(component=get_retriever(retriever_type, top_k=top_k_retriever), name="retriever", inputs=["Query"])
+    p.add_node(component=get_reader(model_name_or_path=reader_model, top_k_reader=top_k_reader), name="QAReader", inputs=["retriever"])
+    p.add_node(component=get_prompt_node(), name="QAPromptNode", inputs=["retriever"])
+    
+    # Setting sort_by_score to False because answers coming from the generator have no score.
+    p.add_node(component=JoinAnswers('concatenate', sort_by_score=False), name="JoinAnswers", inputs=["QAReader", "QAPromptNode"])
+    # p.draw()
+    return p
 
 def get_prompt_node():
     """
@@ -79,15 +97,3 @@ def get_prompt_node():
     prompt_node = PromptNode(model_name_or_path="google/flan-t5-base", default_prompt_template=rag_prompt) # uses flan-t5 model by default
 
     return prompt_node
-
-
-def query_and_rag_pipeline(retriever_type="BM25", reader_model="deepset/roberta-base-squad2", top_k_retriever=1, top_k_reader=1):
-    p = Pipeline()
-    p.add_node(component=get_retriever(retriever_type, top_k=top_k_retriever), name="retriever", inputs=["Query"])
-    p.add_node(component=get_reader(model_name_or_path=reader_model, top_k_reader=top_k_reader), name="QAReader", inputs=["retriever"])
-    p.add_node(component=get_prompt_node(), name="QAPromptNode", inputs=["retriever"])
-    
-    # Setting sort_by_score to False because answers coming from the generator have no score.
-    p.add_node(component=JoinAnswers('concatenate', sort_by_score=False), name="JoinAnswers", inputs=["QAReader", "QAPromptNode"])
-    p.draw()
-    return p
