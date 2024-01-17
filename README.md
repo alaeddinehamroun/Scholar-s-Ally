@@ -53,9 +53,8 @@ docker run -d -p 9200:9200 -e "discovery.type=single-node" elasticsearch:7.9.2
 cd src/api
 uvicorn main:app --reload
 ```
-For now, two endpoints are available:
 1. Index: to index your files availables at data/ folder
-2. Query: enter your question and you'll get the top_k answers
+2. Query: enter your question and you'll get the answer
 
 
 #### 6. Start the UI:
