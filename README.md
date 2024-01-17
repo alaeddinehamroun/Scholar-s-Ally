@@ -12,7 +12,8 @@ Scholar's Ally. How it works?
 ![Example Image](Screenshot.png)
 
 ## Architecture
-![Example Image](architecture.png)
+![Architecture Image](architecture.png)
+source: https://docs.cloud.deepset.ai/docs
 ## Installation steps
 
 #### 1. Clone the repository:
